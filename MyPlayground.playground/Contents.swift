@@ -534,3 +534,92 @@ class Solution104 {
         return max(maxDepth(root!.left) + 1, maxDepth(root!.right) + 1)
     }
 }
+
+/*
+ 给定一个可包含重复数字的序列，返回所有不重复的全排列。
+
+ 示例:
+
+ 输入: [1,1,2]
+ 输出:
+ [
+   [1,1,2],
+   [1,2,1],
+   [2,1,1]
+ ]
+
+ 来源：力扣（LeetCode）
+ 链接：https://leetcode-cn.com/problems/permutations-ii
+ 著作权归领扣网络所有。商业转载请联系官方授权，非商业转载请注明出处。
+ */
+class Solution47 {
+    func permuteUnique(_ nums: [Int]) -> [[Int]] {
+        return []
+    }
+}
+
+/*
+ 给定一个二叉树，判断其是否是一个有效的二叉搜索树。
+
+ 假设一个二叉搜索树具有如下特征：
+
+ 节点的左子树只包含小于当前节点的数。
+ 节点的右子树只包含大于当前节点的数。
+ 所有左子树和右子树自身必须也是二叉搜索树。
+ 示例 1:
+
+ 输入:
+     2
+    / \
+   1   3
+ 输出: true
+ 示例 2:
+
+ 输入:
+     5
+    / \
+   1   4
+      / \
+     3   6
+ 输出: false
+ 解释: 输入为: [5,1,4,null,null,3,6]。
+      根节点的值为 5 ，但是其右子节点值为 4 。
+
+ 来源：力扣（LeetCode）
+ 链接：https://leetcode-cn.com/problems/validate-binary-search-tree
+ 著作权归领扣网络所有。商业转载请联系官方授权，非商业转载请注明出处。
+ */
+class Solution98 {
+    func isValidBST(_ root: TreeNode?) -> Bool {
+        if root == nil {
+            return true
+        }
+        
+        return compare(root!, root!.val, root!.val)
+        
+    }
+    
+    func compare(_ root: TreeNode?, _ max: Int, _ min: Int) -> Bool {
+        if root == nil {
+            return true
+        }
+        if root!.left != nil {
+            if root!.left!.val > max {
+                return false
+            }
+        }
+        
+        if root!.right != nil {
+            if root!.right!.val < min {
+                return false
+            }
+        }
+        
+        return compare(root!.left!, root!.val, root!.val) || compare(root!.right!, root!.val, root!.val)
+    }
+}
+
+
+let s98 = Solution98()
+
+s98.isValidBST(nil)
