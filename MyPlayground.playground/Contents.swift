@@ -534,3 +534,29 @@ class Solution104 {
         return max(maxDepth(root!.left) + 1, maxDepth(root!.right) + 1)
     }
 }
+//剑指 Offer 32 - I. 从上到下打印二叉树
+class Solution32 {
+    func levelOrder(_ root: TreeNode?) -> [Int] {
+        var quenu: [TreeNode] = []
+        var arr: [Int] = []
+        if root == nil {
+            return []
+        }
+        quenu.append(root!)
+
+        while(!quenu.isEmpty) {
+            let node = quenu.removeFirst()
+            arr.append(node.val)
+            if node.left != nil {
+                quenu.append(root!.left!)
+            }
+            if node.right != nil {
+                quenu.append(root!.right!)
+            }
+        }
+        return arr
+    }
+}
+
+let test = Solution32()
+
