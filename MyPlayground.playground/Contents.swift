@@ -9,6 +9,19 @@ public class TreeNode {
         self.right = nil
     }
 }
+public class Node {
+    public var val: Int
+    public var left: Node?
+    public var right: Node?
+      public var next: Node?
+    public init(_ val: Int) {
+        self.val = val
+        self.left = nil
+        self.right = nil
+        self.next = nil
+    }
+}
+
 class Solution {
     func maxDepth(_ root: TreeNode?) -> Int {
         if root == nil {
@@ -105,12 +118,12 @@ class Solution343 {
         }
         
         for idx in 2..<n {
-            let res = idx * (n - idx)
+            let res = idx (n - idx)
             if res > max {
                 max0 = idx
                 max1 = n - idx
                 max = res
-                integerBreak(max0) * integerBreak(max1)
+                integerBreak(max0) integerBreak(max1)
             }
             
         }
@@ -125,7 +138,7 @@ class Solution343 {
 //print(test.integerBreak(10))
 
 
-/* 875. 爱吃香蕉的珂珂
+/875. 爱吃香蕉的珂珂
  珂珂喜欢吃香蕉。这里有 N 堆香蕉，第 i 堆中有 piles[i] 根香蕉。警卫已经离开了，将在 H 小时后回来。
 
  珂珂可以决定她吃香蕉的速度 K （单位：根/小时）。每个小时，她将会选择一堆香蕉，从中吃掉 K 根。如果这堆香蕉少于 K 根，她将吃掉这堆的所有香蕉，然后这一小时内不会再吃更多的香蕉。
@@ -595,31 +608,344 @@ class Solution98 {
             return true
         }
         
-        return compare(root!, root!.val, root!.val)
+        return isValidUtil(root, Int.max, Int.min)
         
     }
     
-    func compare(_ root: TreeNode?, _ max: Int, _ min: Int) -> Bool {
-        if root == nil {
+    func isValidUtil(_ root: TreeNode?, _ max: Int, _ min: Int) -> Bool {
+        guard let node = root else {
             return true
         }
-        if root!.left != nil {
-            if root!.left!.val > max {
-                return false
-            }
+        guard node.val > min && node.val < max else {
+            return false
+        }
+        return isValidUtil(node.left, node.val, min) && isValidUtil(node.right, max, node.val)
+    }
+}
+
+/*
+ 538. 把二叉搜索树转换为累加树
+ 给定一个二叉搜索树（Binary Search Tree），把它转换成为累加树（Greater Tree)，使得每个节点的值是原来的节点值加上所有大于它的节点值之和。
+
+  
+
+ 例如：
+
+ 输入: 原始二叉搜索树:
+               5
+             /   \
+            2     13
+
+ 输出: 转换为累加树:
+              18
+             /   \
+           20     13
+
+ 来源：力扣（LeetCode）
+ 链接：https://leetcode-cn.com/problems/convert-bst-to-greater-tree
+ 著作权归领扣网络所有。商业转载请联系官方授权，非商业转载请注明出处。
+ */
+class Solution538 {
+    var last: Int = 0
+    func convertBST(_ root: TreeNode?) -> TreeNode? {
+        if root == nil {
+            return nil
         }
         
-        if root!.right != nil {
-            if root!.right!.val < min {
-                return false
-            }
-        }
+        let right =  convertBST(root!.right)
         
-        return compare(root!.left!, root!.val, root!.val) || compare(root!.right!, root!.val, root!.val)
+        last += right!.val
+        
+        right!.val = last
+        
+        _ = convertBST(root!.left)
+        
+        return root
+    }
+    
+}
+/*
+ 给定两个二叉树，想象当你将它们中的一个覆盖到另一个上时，两个二叉树的一些节点便会重叠。
+
+ 你需要将他们合并为一个新的二叉树。合并的规则是如果两个节点重叠，那么将他们的值相加作为节点合并后的新值，否则不为 NULL 的节点将直接作为新二叉树的节点。
+
+ 示例 1:
+
+ 输入:
+     Tree 1                     Tree 2
+           1                         2
+          / \                       / \
+         3   2                     1   3
+        /                           \   \
+       5                             4   7
+ 输出:
+ 合并后的树:
+          3
+         / \
+        4   5
+       / \   \
+      5   4   7
+ 注意: 合并必须从两个树的根节点开始
+
+ 来源：力扣（LeetCode）
+ 链接：https://leetcode-cn.com/problems/merge-two-binary-trees
+ 著作权归领扣网络所有。商业转载请联系官方授权，非商业转载请注明出处。
+ */
+
+class Solution617 {
+    func mergeTrees(_ t1: TreeNode?, _ t2: TreeNode?) -> TreeNode? {
+        if t1 == nil && t2 == nil {
+            return nil
+        }
+        let root = TreeNode((t1 == nil ? 0 : t1!.val) + (t2 == nil ? 0 : t2!.val))
+        
+        root.left = mergeTrees(t1?.left, t2?.left)
+        
+        root.right = mergeTrees(t1?.right, t2?.right)
+        
+        return root
     }
 }
 
 
-let s98 = Solution98()
+class Solution98_2 {
+    
+    func isValidBST(_ root: TreeNode?) -> Bool {
+        guard root != nil else {
+            return true
+        }
+        var stack = [TreeNode](), node = root, pre: TreeNode? = nil
+        
+        while node != nil || !stack.isEmpty {
+            while node != nil {
+                stack.append(node!)
+                node = node!.left
+            }
+            node = stack.removeLast()
+            
+            if pre != nil && pre!.val >= node!.val {
+                return false
+            }
+            pre = node
+            
+            node = node!.right
+        }
+        return true
+    }
+    
+}
 
-s98.isValidBST(nil)
+/*
+ 106. 从中序与后序遍历序列构造二叉树
+ 根据一棵树的中序遍历与后序遍历构造二叉树。
+
+ 注意:
+ 你可以假设树中没有重复的元素。
+
+ 例如，给出
+
+ 中序遍历 inorder = [9,3,15,20,7]
+ 后序遍历 postorder = [9,15,7,20,3]
+ 返回如下的二叉树：
+
+     3
+    / \
+   9  20
+     /  \
+    15   7
+
+ 来源：力扣（LeetCode）
+ 链接：https://leetcode-cn.com/problems/construct-binary-tree-from-inorder-and-postorder-traversal
+ 著作权归领扣网络所有。商业转载请联系官方授权，非商业转载请注明出处。
+ */
+class Solution106 {
+    func buildTree(_ inorder: [Int], _ postorder: [Int]) -> TreeNode? {
+        var inorder = inorder
+        var postorder = postorder
+        let val = postorder.removeLast()
+        let root = TreeNode(val)
+        
+        let index = inorder.index(before: val)
+        
+        
+    }
+    
+}
+
+/*
+ 二叉搜索树中的两个节点被错误地交换。
+
+ 请在不改变其结构的情况下，恢复这棵树。
+
+ 示例 1:
+
+ 输入: [1,3,null,null,2]
+
+    1
+   /
+  3
+   \
+    2
+
+ 输出: [3,1,null,null,2]
+
+    3
+   /
+  1
+   \
+    2
+ 示例 2:
+
+ 输入: [3,1,4,null,null,2]
+
+   3
+  / \
+ 1   4
+    /
+   2
+
+ 输出: [2,1,4,null,null,3]
+
+   2
+  / \
+ 1   4
+    /
+   3
+ 进阶:
+
+ 使用 O(n) 空间复杂度的解法很容易实现。
+ 你能想出一个只使用常数空间的解决方案吗？
+
+ 来源：力扣（LeetCode）
+ 链接：https://leetcode-cn.com/problems/recover-binary-search-tree
+ 著作权归领扣网络所有。商业转载请联系官方授权，非商业转载请注明出处。
+ */
+class Solution99 {
+    func recoverTree(_ root: TreeNode?) {
+        
+    }
+}
+
+/*
+ 给定一个二叉树
+
+ struct Node {
+   int val;
+   Node *left;
+   Node *right;
+   Node *next;
+ }
+ 填充它的每个 next 指针，让这个指针指向其下一个右侧节点。如果找不到下一个右侧节点，则将 next 指针设置为 NULL。
+
+ 初始状态下，所有 next 指针都被设置为 NULL。
+
+  
+
+ 进阶：
+
+ 你只能使用常量级额外空间。
+ 使用递归解题也符合要求，本题中递归程序占用的栈空间不算做额外的空间复杂度。
+  
+
+ 示例：
+
+
+
+ 输入：root = [1,2,3,4,5,null,7]
+ 输出：[1,#,2,3,#,4,5,7,#]
+ 解释：给定二叉树如图 A 所示，你的函数应该填充它的每个 next 指针，以指向其下一个右侧节点，如图 B 所示。
+  
+
+ 提示：
+
+ 树中的节点数小于 6000
+ -100 <= node.val <= 100
+
+ 来源：力扣（LeetCode）
+ 链接：https://leetcode-cn.com/problems/populating-next-right-pointers-in-each-node-ii
+ 著作权归领扣网络所有。商业转载请联系官方授权，非商业转载请注明出处。
+ */
+class Solution117 {
+    func connect(_ root: Node?) -> Node? {
+        if root == nil {
+            return nil
+        }
+        var stack: [Node] = []
+        stack.append(root!)
+        while(!stack.isEmpty) {
+            let count = stack.count
+            var pre: Node? = nil
+            for idx in 0..<count {
+                let node = stack.removeFirst()
+
+                if node.left != nil {
+                    stack.append(node.left!)
+                }
+
+                if node.right != nil {
+                    stack.append(node.right!)
+                }
+                if idx == 0 {
+                    pre = node
+                } else {
+                    pre!.next = node
+                    pre = node
+
+                    if idx == count - 1 {
+                        node.next = nil
+                    }
+                }
+            }
+        }
+        return root
+    }
+
+}
+
+/*
+ 给定一个二叉树，检查它是否是镜像对称的。
+
+  
+
+ 例如，二叉树 [1,2,2,3,4,4,3] 是对称的。
+
+     1
+    / \
+   2   2
+  / \ / \
+ 3  4 4  3
+  
+
+ 但是下面这个 [1,2,2,null,3,null,3] 则不是镜像对称的:
+
+     1
+    / \
+   2   2
+    \   \
+    3    3
+
+ 来源：力扣（LeetCode）
+ 链接：https://leetcode-cn.com/problems/symmetric-tree
+ 著作权归领扣网络所有。商业转载请联系官方授权，非商业转载请注明出处。
+ */
+class Solution101 {
+    func isSymmetric(_ root: TreeNode?) -> Bool {
+        if root == nil {
+            return true
+        }
+        return compare(root!.left, root!.right)
+    }
+    func compare(_ left: TreeNode?, _ right: TreeNode?) -> Bool {
+        if left == nil && right == nil {
+            return true
+        }
+        guard let left = left, let right = right else {
+            return false
+        }
+        if left.val != right.val {
+            return false
+        }
+
+        return compare(left.left, right.right) && compare(left.right, right.left)
+    }
+}
