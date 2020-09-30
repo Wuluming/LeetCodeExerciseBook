@@ -22,6 +22,137 @@ public class Node {
     }
 }
 
+/*
+        定义                      优点                                                                                 缺点
+ 递归：程序调用自身              大问题转化成小问题，可以减少代码量，同时代码精简，可读性好                      递归调用了浪费了空间，而且递归太深容易造成堆栈的溢出
+ 迭代：利用变量的原值推出新值      代码运行效率好，因为时间只因循环次数增加而增加，而且没有额外的空间开销            代码不如递归简洁
+ 
+ 递归和迭代的关系：1）递归中一定有迭代，但是迭代中不一定有递归，大部分可以相互转换 2）能用迭代的不用递归，递归调用函数，并且递归太深容易造成堆栈的溢出
+ */
+
+class Solution0 {
+    //前序遍历
+    //study :https://www.cnblogs.com/bigsai/p/11393609.html
+    var result: [Int] = []
+    func qianXu(_ root: TreeNode?) -> [Int] {
+        if root == nil {
+            return result
+        }
+        result.append(root!.val)
+        _ = qianXu(root!.left)
+        _ = qianXu(root!.right)
+        
+        return result
+    }
+    
+    //非递归
+    func qianXu2(_ root: TreeNode?) -> [Int] {
+        if root == nil {
+            return result
+        }
+        var stack:[TreeNode] = []
+        while !stack.isEmpty {
+            let node = stack.removeLast()
+            if node.right != nil {
+                stack.append(node.right!)
+            }
+            if node.left != nil {
+                stack.append(node.left!)
+            }
+            result.append(node.val)
+        }
+        return result
+    }
+    
+    func qianXu3(_ root: TreeNode?) -> [Int] {
+        var root = root
+        var stack:[TreeNode] = []
+        while !stack.isEmpty || root != nil {
+            if root != nil {
+                result.append(root!.val)
+                stack.append(root!)
+                root = root!.left
+            } else {
+                root = stack.removeLast()
+                root = root!.right
+            }
+        }
+        return result
+    }
+    //非递归中序遍历
+    func zhongXu(_ root: TreeNode?) -> [Int] {
+        var root = root
+        
+        var stack:[TreeNode] = []
+        
+        while !stack.isEmpty || root != nil {
+            if root != nil {
+                stack.append(root!)
+                root = root!.left
+            } else {
+                root = stack.removeLast()
+                
+                result.append(root!.val)
+                
+                root = root!.right
+                
+            }
+        }
+        return result
+    }
+    //非递归后续
+    func houXu(_ root: TreeNode?) -> [Int] {
+        var root = root
+        var stack: [TreeNode] = []
+        var map: [Int: Int] = [:]
+        while !stack.isEmpty || root != nil {
+            if root != nil {
+                stack.append(root!)
+                map[root!.val] = 1
+                
+                root = root!.left
+            } else {
+                root = stack.last
+                if map[root!.val] == 2 {
+                    _ = stack.removeLast()
+                    result.append(root!.val)
+                    root = nil
+                } else {
+                    map[root!.val] = 2
+                    root = root!.right
+                }
+            }
+        }
+        return result
+    }
+    //双栈实现后续遍历
+    func houXu2(_ root: TreeNode?) -> [Int] {
+        var stack1:[TreeNode] = []
+        var stack2:[TreeNode] = []
+        if root == nil {
+            return result
+        }
+        stack1.append(root!)
+        while !stack1.isEmpty {
+            let node = stack1.last!
+            
+            stack2.append(node)
+            
+            if node.left != nil {
+                stack1.append(node.left!)
+            }
+            if node.right != nil {
+                stack1.append(node.right!)
+            }
+        }
+        while !stack2.isEmpty {
+            let node = stack2.removeLast()
+            result.append(node.val)
+        }
+        return result
+    }
+}
+
 class Solution {
     func maxDepth(_ root: TreeNode?) -> Int {
         if root == nil {
@@ -118,12 +249,12 @@ class Solution343 {
         }
         
         for idx in 2..<n {
-            let res = idx (n - idx)
+            let res = idx * (n - idx)
             if res > max {
                 max0 = idx
                 max1 = n - idx
                 max = res
-                integerBreak(max0) integerBreak(max1)
+                integerBreak(max0) * integerBreak(max1)
             }
             
         }
@@ -138,7 +269,7 @@ class Solution343 {
 //print(test.integerBreak(10))
 
 
-/875. 爱吃香蕉的珂珂
+/*875. 爱吃香蕉的珂珂
  珂珂喜欢吃香蕉。这里有 N 堆香蕉，第 i 堆中有 piles[i] 根香蕉。警卫已经离开了，将在 H 小时后回来。
 
  珂珂可以决定她吃香蕉的速度 K （单位：根/小时）。每个小时，她将会选择一堆香蕉，从中吃掉 K 根。如果这堆香蕉少于 K 根，她将吃掉这堆的所有香蕉，然后这一小时内不会再吃更多的香蕉。
@@ -760,14 +891,7 @@ class Solution98_2 {
  */
 class Solution106 {
     func buildTree(_ inorder: [Int], _ postorder: [Int]) -> TreeNode? {
-        var inorder = inorder
-        var postorder = postorder
-        let val = postorder.removeLast()
-        let root = TreeNode(val)
-        
-        let index = inorder.index(before: val)
-        
-        
+        return nil
     }
     
 }
@@ -947,5 +1071,182 @@ class Solution101 {
         }
 
         return compare(left.left, right.right) && compare(left.right, right.left)
+    }
+}
+/*
+ 701. 二叉搜索树中的插入操作
+ 给定二叉搜索树（BST）的根节点和要插入树中的值，将值插入二叉搜索树。 返回插入后二叉搜索树的根节点。 输入数据保证，新值和原始二叉搜索树中的任意节点值都不同。
+
+ 注意，可能存在多种有效的插入方式，只要树在插入后仍保持为二叉搜索树即可。 你可以返回任意有效的结果。
+
+  
+
+ 例如,
+
+ 给定二叉搜索树:
+
+         4
+        / \
+       2   7
+      / \
+     1   3
+
+ 和 插入的值: 5
+ 你可以返回这个二叉搜索树:
+
+          4
+        /   \
+       2     7
+      / \   /
+     1   3 5
+ 或者这个树也是有效的:
+
+          5
+        /   \
+       2     7
+      / \
+     1   3
+          \
+           4
+  
+
+ 提示：
+
+ 给定的树上的节点数介于 0 和 10^4 之间
+ 每个节点都有一个唯一整数值，取值范围从 0 到 10^8
+ -10^8 <= val <= 10^8
+ 新值和原始二叉搜索树中的任意节点值都不同
+
+ 来源：力扣（LeetCode）
+ 链接：https://leetcode-cn.com/problems/insert-into-a-binary-search-tree
+ 著作权归领扣网络所有。商业转载请联系官方授权，非商业转载请注明出处。
+ */
+class Solution701 {
+    func insertIntoBST(_ root: TreeNode?, _ val: Int) -> TreeNode? {
+        if root == nil {
+            return TreeNode(val)
+        }
+        if root!.val < val {
+            root!.right = insertIntoBST(root!.right, val)
+        } else {
+            root!.left = insertIntoBST(root!.left, val)
+        }
+        return root
+    }
+    
+    
+}
+
+class SolutionTest {
+    /*
+     给定两个由小写字母构成的字符串 A 和 B ，只要我们可以通过交换 A 中的两个字母得到与 B 相等的结果，就返回 true ；否则返回 false 。
+
+      
+
+     示例 1：
+
+     输入： A = "ab", B = "ba"
+     输出： true
+     示例 2：
+
+     输入： A = "ab", B = "ab"
+     输出： false
+     示例 3:
+
+     输入： A = "aa", B = "aa"
+     输出： true
+     示例 4：
+
+     输入： A = "aaaaaaabc", B = "aaaaaaacb"
+     输出： true
+     示例 5：
+
+     输入： A = "", B = "aa"
+     输出： false
+     */
+    func buddyStrings(_ A: String, _ B: String) -> Bool {
+        if A.count < 2 || B.count < 2 {
+            return false
+        }
+        if A.count != B.count{
+            return false
+        }
+        
+        let arrA = A.map { return $0}
+        let arrB = B.map { return $0}
+        
+        if A == B {
+            for idx in 0..<arrA.count {
+                for idy in (idx+1)..<arrA.count {
+                    if arrA[idx] == arrA[idy] {
+                        return true
+                    }
+                }
+            }
+        } else {
+            var diff:[Int] = []
+            for (idx,valA) in arrA.enumerated() {
+                let valB = arrB[idx]
+                if valA != valB {
+                    diff.append(idx)
+                }
+            }
+            if diff.count == 2 {
+                let x1 = diff[0]
+                let x2 = diff[1]
+                if arrA[x1] == arrB[x2] && arrA[x2] == arrB[x1] {
+                    return true
+                }
+            }
+            
+        }
+        return false
+    }
+    /*
+     给定一个整数数组 A，找到 min(B) 的总和，其中 B 的范围为 A 的每个（连续）子数组。
+
+     由于答案可能很大，因此返回答案模 10^9 + 7。
+
+      
+
+     示例：
+
+     输入：[3,1,2,4]
+     输出：17
+     解释：
+     子数组为 [3]，[1]，[2]，[4]，[3,1]，[1,2]，[2,4]，[3,1,2]，[1,2,4]，[3,1,2,4]。
+     最小值为 3，1，2，4，1，1，2，1，1，1，和为 17。
+     */
+    
+    func sumSubarrayMins(_ A: [Int]) -> Int {
+        return 0
+    }
+    
+    /*
+    给定一个由 0 和 1 组成的数组 A，将数组分成 3 个非空的部分，使得所有这些部分表示相同的二进制值。
+
+    如果可以做到，请返回任何 [i, j]，其中 i+1 < j，这样一来：
+
+    A[0], A[1], ..., A[i] 组成第一部分；
+    A[i+1], A[i+2], ..., A[j-1] 作为第二部分；
+    A[j], A[j+1], ..., A[A.length - 1] 是第三部分。
+    这三个部分所表示的二进制值相等。
+    如果无法做到，就返回 [-1, -1]。
+
+    注意，在考虑每个部分所表示的二进制时，应当将其看作一个整体。例如，[1,1,0] 表示十进制中的 6，而不会是 3。此外，前导零也是被允许的，所以 [0,1,1] 和 [1,1] 表示相同的值。
+
+     
+
+    示例 1：
+
+    输入：[1,0,1,0,1]
+    输出：[0,3]
+    示例 2：
+
+    输出：[1,1,0,1,1]
+    输出：[-1,-1]
+    */
+    func threeEqualParts(_ A: [Int]) -> [Int] {
+        return []
     }
 }
