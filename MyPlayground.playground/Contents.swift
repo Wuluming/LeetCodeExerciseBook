@@ -560,3 +560,195 @@ class Solution32 {
 
 let test = Solution32()
 
+/*
+ 给定一个二叉树，判断其是否是一个有效的二叉搜索树。
+
+ 假设一个二叉搜索树具有如下特征：
+
+ 节点的左子树只包含小于当前节点的数。
+ 节点的右子树只包含大于当前节点的数。
+ 所有左子树和右子树自身必须也是二叉搜索树。
+ 示例 1:
+
+ 输入:
+     2
+    / \
+   1   3
+ 输出: true
+ 示例 2:
+
+ 输入:
+     5
+    / \
+   1   4
+      / \
+     3   6
+ 输出: false
+ 解释: 输入为: [5,1,4,null,null,3,6]。
+      根节点的值为 5 ，但是其右子节点值为 4 。
+
+ 来源：力扣（LeetCode）
+ 链接：https://leetcode-cn.com/problems/validate-binary-search-tree
+ 著作权归领扣网络所有。商业转载请联系官方授权，非商业转载请注明出处。
+ */
+class Solution98 {
+    func isValidBST(_ root: TreeNode?) -> Bool {
+        if root == nil {
+            return true
+        }
+        
+        return compare(root!, root!.val, root!.val)
+        
+    }
+    
+    func compare(_ root: TreeNode?, _ max: Int, _ min: Int) -> Bool {
+        if root == nil {
+            return true
+        }
+        if root!.left != nil {
+            if root!.left!.val > max {
+                return false
+            }
+        }
+        
+        if root!.right != nil {
+            if root!.right!.val < min {
+                return false
+            }
+        }
+        
+        return compare(root!.left!, root!.val, root!.val) || compare(root!.right!, root!.val, root!.val)
+    }
+}
+
+/*
+ 199. 二叉树的右视图
+ 给定一棵二叉树，想象自己站在它的右侧，按照从顶部到底部的顺序，返回从右侧所能看到的节点值。
+
+ 示例:
+
+ 输入: [1,2,3,null,5,null,4]
+ 输出: [1, 3, 4]
+ 解释:
+
+    1            <---
+  /   \
+ 2     3         <---
+  \     \
+   5     4       <---
+ */
+
+class Solution199 {
+    var res:[Int] = []
+    var dic:[Int:[Int]] = [:]
+    func rightSideView(_ root: TreeNode?) -> [Int] {
+        if root == nil {
+           return []
+        }
+        deep(root!, 0)
+        
+        
+        for key in dic.keys.sorted() {
+            let arr = dic[key]
+            res.append(arr!.last!)
+        }
+        return res
+    }
+    
+    func deep(_ root: TreeNode?, _ level: Int) {
+        if root == nil {
+            return
+        }
+        if dic[level] != nil {
+            var temp:[Int] = []
+            temp.append(root!.val)
+            dic[level] = temp
+        } else {
+            dic[level]!.append(root!.val)
+        }
+        
+        deep(root!.left, level + 1)
+        
+        deep(root!.right, level + 1)
+    }
+}
+
+let test199 = Solution199()
+
+/*
+ 给定一组不含重复元素的整数数组 nums，返回该数组所有可能的子集（幂集）。
+
+ 说明：解集不能包含重复的子集。
+
+ 示例:
+
+ 输入: nums = [1,2,3]
+ 输出:
+ [
+   [3],
+   [1],
+   [2],
+   [1,2,3],
+   [1,3],
+   [2,3],
+   [1,2],
+   []
+ ]
+
+ 来源：力扣（LeetCode）
+ 链接：https://leetcode-cn.com/problems/subsets
+ 著作权归领扣网络所有。商业转载请联系官方授权，非商业转载请注明出处。
+ */
+
+class Solution78 {
+    func subsets(_ nums: [Int]) -> [[Int]] {
+        let set = Set(arrayLiteral: nums)
+        print(set)
+        return []
+    }
+}
+
+let test78 = Solution78()
+
+print(test78.subsets([1,2,3,3,2]))
+
+/*
+ 给定两个二叉树，想象当你将它们中的一个覆盖到另一个上时，两个二叉树的一些节点便会重叠。
+
+ 你需要将他们合并为一个新的二叉树。合并的规则是如果两个节点重叠，那么将他们的值相加作为节点合并后的新值，否则不为 NULL 的节点将直接作为新二叉树的节点。
+
+ 示例 1:
+
+ 输入:
+     Tree 1                     Tree 2
+           1                         2
+          / \                       / \
+         3   2                     1   3
+        /                           \   \
+       5                             4   7
+ 输出:
+ 合并后的树:
+          3
+         / \
+        4   5
+       / \   \
+      5   4   7
+ 注意: 合并必须从两个树的根节点开始。
+
+ 来源：力扣（LeetCode）
+ 链接：https://leetcode-cn.com/problems/merge-two-binary-trees
+ 著作权归领扣网络所有。商业转载请联系官方授权，非商业转载请注明出处。
+ */
+class Solution617 {
+    func mergeTrees(_ t1: TreeNode?, _ t2: TreeNode?) -> TreeNode? {
+        if t1 == nil && t2 == nil {
+            return nil
+        }
+        let root: TreeNode = TreeNode((t1 == nil ? 0: t1!.val) + (t2 == nil ? 0 : t2!.val))
+        
+        root.left = mergeTrees(t1?.left, t2?.left)
+        root.right = mergeTrees(t1?.right, t2?.right)
+        
+        return root
+    }
+}
