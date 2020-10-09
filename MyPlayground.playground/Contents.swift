@@ -9,6 +9,150 @@ public class TreeNode {
         self.right = nil
     }
 }
+public class Node {
+    public var val: Int
+    public var left: Node?
+    public var right: Node?
+      public var next: Node?
+    public init(_ val: Int) {
+        self.val = val
+        self.left = nil
+        self.right = nil
+        self.next = nil
+    }
+}
+
+/*
+        定义                      优点                                                                                 缺点
+ 递归：程序调用自身              大问题转化成小问题，可以减少代码量，同时代码精简，可读性好                      递归调用了浪费了空间，而且递归太深容易造成堆栈的溢出
+ 迭代：利用变量的原值推出新值      代码运行效率好，因为时间只因循环次数增加而增加，而且没有额外的空间开销            代码不如递归简洁
+ 
+ 递归和迭代的关系：1）递归中一定有迭代，但是迭代中不一定有递归，大部分可以相互转换 2）能用迭代的不用递归，递归调用函数，并且递归太深容易造成堆栈的溢出
+ */
+
+class Solution0 {
+    //前序遍历
+    //study :https://www.cnblogs.com/bigsai/p/11393609.html
+    var result: [Int] = []
+    func qianXu(_ root: TreeNode?) -> [Int] {
+        if root == nil {
+            return result
+        }
+        result.append(root!.val)
+        _ = qianXu(root!.left)
+        _ = qianXu(root!.right)
+        
+        return result
+    }
+    
+    //非递归
+    func qianXu2(_ root: TreeNode?) -> [Int] {
+        if root == nil {
+            return result
+        }
+        var stack:[TreeNode] = []
+        while !stack.isEmpty {
+            let node = stack.removeLast()
+            if node.right != nil {
+                stack.append(node.right!)
+            }
+            if node.left != nil {
+                stack.append(node.left!)
+            }
+            result.append(node.val)
+        }
+        return result
+    }
+    
+    func qianXu3(_ root: TreeNode?) -> [Int] {
+        var root = root
+        var stack:[TreeNode] = []
+        while !stack.isEmpty || root != nil {
+            if root != nil {
+                result.append(root!.val)
+                stack.append(root!)
+                root = root!.left
+            } else {
+                root = stack.removeLast()
+                root = root!.right
+            }
+        }
+        return result
+    }
+    //非递归中序遍历
+    func zhongXu(_ root: TreeNode?) -> [Int] {
+        var root = root
+        
+        var stack:[TreeNode] = []
+        
+        while !stack.isEmpty || root != nil {
+            if root != nil {
+                stack.append(root!)
+                root = root!.left
+            } else {
+                root = stack.removeLast()
+                
+                result.append(root!.val)
+                
+                root = root!.right
+                
+            }
+        }
+        return result
+    }
+    //非递归后续
+    func houXu(_ root: TreeNode?) -> [Int] {
+        var root = root
+        var stack: [TreeNode] = []
+        var map: [Int: Int] = [:]
+        while !stack.isEmpty || root != nil {
+            if root != nil {
+                stack.append(root!)
+                map[root!.val] = 1
+                
+                root = root!.left
+            } else {
+                root = stack.last
+                if map[root!.val] == 2 {
+                    _ = stack.removeLast()
+                    result.append(root!.val)
+                    root = nil
+                } else {
+                    map[root!.val] = 2
+                    root = root!.right
+                }
+            }
+        }
+        return result
+    }
+    //双栈实现后续遍历
+    func houXu2(_ root: TreeNode?) -> [Int] {
+        var stack1:[TreeNode] = []
+        var stack2:[TreeNode] = []
+        if root == nil {
+            return result
+        }
+        stack1.append(root!)
+        while !stack1.isEmpty {
+            let node = stack1.last!
+            
+            stack2.append(node)
+            
+            if node.left != nil {
+                stack1.append(node.left!)
+            }
+            if node.right != nil {
+                stack1.append(node.right!)
+            }
+        }
+        while !stack2.isEmpty {
+            let node = stack2.removeLast()
+            result.append(node.val)
+        }
+        return result
+    }
+}
+
 class Solution {
     func maxDepth(_ root: TreeNode?) -> Int {
         if root == nil {
@@ -125,7 +269,7 @@ class Solution343 {
 //print(test.integerBreak(10))
 
 
-/* 875. 爱吃香蕉的珂珂
+/*875. 爱吃香蕉的珂珂
  珂珂喜欢吃香蕉。这里有 N 堆香蕉，第 i 堆中有 piles[i] 根香蕉。警卫已经离开了，将在 H 小时后回来。
 
  珂珂可以决定她吃香蕉的速度 K （单位：根/小时）。每个小时，她将会选择一堆香蕉，从中吃掉 K 根。如果这堆香蕉少于 K 根，她将吃掉这堆的所有香蕉，然后这一小时内不会再吃更多的香蕉。
@@ -597,30 +741,417 @@ class Solution98 {
             return true
         }
         
-        return compare(root!, root!.val, root!.val)
+        return isValidUtil(root, Int.max, Int.min)
         
     }
     
-    func compare(_ root: TreeNode?, _ max: Int, _ min: Int) -> Bool {
-        if root == nil {
+    func isValidUtil(_ root: TreeNode?, _ max: Int, _ min: Int) -> Bool {
+        guard let node = root else {
             return true
         }
-        if root!.left != nil {
-            if root!.left!.val > max {
-                return false
-            }
+        guard node.val > min && node.val < max else {
+            return false
         }
-        
-        if root!.right != nil {
-            if root!.right!.val < min {
-                return false
-            }
-        }
-        
-        return compare(root!.left!, root!.val, root!.val) || compare(root!.right!, root!.val, root!.val)
+        return isValidUtil(node.left, node.val, min) && isValidUtil(node.right, max, node.val)
     }
 }
 
+/*
+ 538. 把二叉搜索树转换为累加树
+ 给定一个二叉搜索树（Binary Search Tree），把它转换成为累加树（Greater Tree)，使得每个节点的值是原来的节点值加上所有大于它的节点值之和。
+
+  
+
+ 例如：
+
+ 输入: 原始二叉搜索树:
+               5
+             /   \
+            2     13
+
+ 输出: 转换为累加树:
+              18
+             /   \
+           20     13
+
+ 来源：力扣（LeetCode）
+ 链接：https://leetcode-cn.com/problems/convert-bst-to-greater-tree
+ 著作权归领扣网络所有。商业转载请联系官方授权，非商业转载请注明出处。
+ */
+class Solution538 {
+    var last: Int = 0
+    func convertBST(_ root: TreeNode?) -> TreeNode? {
+        if root == nil {
+            return nil
+        }
+        
+        let right =  convertBST(root!.right)
+        
+        last += right!.val
+        
+        right!.val = last
+        
+        _ = convertBST(root!.left)
+        
+        return root
+    }
+    
+}
+/*
+ 给定两个二叉树，想象当你将它们中的一个覆盖到另一个上时，两个二叉树的一些节点便会重叠。
+
+ 你需要将他们合并为一个新的二叉树。合并的规则是如果两个节点重叠，那么将他们的值相加作为节点合并后的新值，否则不为 NULL 的节点将直接作为新二叉树的节点。
+
+ 示例 1:
+
+ 输入:
+     Tree 1                     Tree 2
+           1                         2
+          / \                       / \
+         3   2                     1   3
+        /                           \   \
+       5                             4   7
+ 输出:
+ 合并后的树:
+          3
+         / \
+        4   5
+       / \   \
+      5   4   7
+ 注意: 合并必须从两个树的根节点开始
+
+ 来源：力扣（LeetCode）
+ 链接：https://leetcode-cn.com/problems/merge-two-binary-trees
+ 著作权归领扣网络所有。商业转载请联系官方授权，非商业转载请注明出处。
+ */
+
+class Solution617 {
+    func mergeTrees(_ t1: TreeNode?, _ t2: TreeNode?) -> TreeNode? {
+        if t1 == nil && t2 == nil {
+            return nil
+        }
+        let root = TreeNode((t1 == nil ? 0 : t1!.val) + (t2 == nil ? 0 : t2!.val))
+        
+        root.left = mergeTrees(t1?.left, t2?.left)
+        
+        root.right = mergeTrees(t1?.right, t2?.right)
+        
+        return root
+    }
+}
+
+
+class Solution98_2 {
+    
+    func isValidBST(_ root: TreeNode?) -> Bool {
+        guard root != nil else {
+            return true
+        }
+        var stack = [TreeNode](), node = root, pre: TreeNode? = nil
+        
+        while node != nil || !stack.isEmpty {
+            while node != nil {
+                stack.append(node!)
+                node = node!.left
+            }
+            node = stack.removeLast()
+            
+            if pre != nil && pre!.val >= node!.val {
+                return false
+            }
+            pre = node
+            
+            node = node!.right
+        }
+        return true
+    }
+    
+}
+
+/*
+ 106. 从中序与后序遍历序列构造二叉树
+ 根据一棵树的中序遍历与后序遍历构造二叉树。
+
+ 注意:
+ 你可以假设树中没有重复的元素。
+
+ 例如，给出
+
+ 中序遍历 inorder = [9,3,15,20,7]
+ 后序遍历 postorder = [9,15,7,20,3]
+ 返回如下的二叉树：
+
+     3
+    / \
+   9  20
+     /  \
+    15   7
+
+ 来源：力扣（LeetCode）
+ 链接：https://leetcode-cn.com/problems/construct-binary-tree-from-inorder-and-postorder-traversal
+ 著作权归领扣网络所有。商业转载请联系官方授权，非商业转载请注明出处。
+ */
+class Solution106 {
+    func buildTree(_ inorder: [Int], _ postorder: [Int]) -> TreeNode? {
+        return nil
+    }
+    
+}
+
+/*
+ 二叉搜索树中的两个节点被错误地交换。
+
+ 请在不改变其结构的情况下，恢复这棵树。
+
+ 示例 1:
+
+ 输入: [1,3,null,null,2]
+
+    1
+   /
+  3
+   \
+    2
+
+ 输出: [3,1,null,null,2]
+
+    3
+   /
+  1
+   \
+    2
+ 示例 2:
+
+ 输入: [3,1,4,null,null,2]
+
+   3
+  / \
+ 1   4
+    /
+   2
+
+ 输出: [2,1,4,null,null,3]
+
+   2
+  / \
+ 1   4
+    /
+   3
+ 进阶:
+
+ 使用 O(n) 空间复杂度的解法很容易实现。
+ 你能想出一个只使用常数空间的解决方案吗？
+
+ 来源：力扣（LeetCode）
+ 链接：https://leetcode-cn.com/problems/recover-binary-search-tree
+ 著作权归领扣网络所有。商业转载请联系官方授权，非商业转载请注明出处。
+ */
+class Solution99 {
+    func recoverTree(_ root: TreeNode?) {
+        
+    }
+}
+
+/*
+ 给定一个二叉树
+
+ struct Node {
+   int val;
+   Node *left;
+   Node *right;
+   Node *next;
+ }
+ 填充它的每个 next 指针，让这个指针指向其下一个右侧节点。如果找不到下一个右侧节点，则将 next 指针设置为 NULL。
+
+ 初始状态下，所有 next 指针都被设置为 NULL。
+
+  
+
+ 进阶：
+
+ 你只能使用常量级额外空间。
+ 使用递归解题也符合要求，本题中递归程序占用的栈空间不算做额外的空间复杂度。
+  
+
+ 示例：
+
+
+
+ 输入：root = [1,2,3,4,5,null,7]
+ 输出：[1,#,2,3,#,4,5,7,#]
+ 解释：给定二叉树如图 A 所示，你的函数应该填充它的每个 next 指针，以指向其下一个右侧节点，如图 B 所示。
+  
+
+ 提示：
+
+ 树中的节点数小于 6000
+ -100 <= node.val <= 100
+
+ 来源：力扣（LeetCode）
+ 链接：https://leetcode-cn.com/problems/populating-next-right-pointers-in-each-node-ii
+ 著作权归领扣网络所有。商业转载请联系官方授权，非商业转载请注明出处。
+ */
+class Solution117 {
+    func connect(_ root: Node?) -> Node? {
+        if root == nil {
+            return nil
+        }
+        var stack: [Node] = []
+        stack.append(root!)
+        while(!stack.isEmpty) {
+            let count = stack.count
+            var pre: Node? = nil
+            for idx in 0..<count {
+                let node = stack.removeFirst()
+
+                if node.left != nil {
+                    stack.append(node.left!)
+                }
+
+                if node.right != nil {
+                    stack.append(node.right!)
+                }
+                if idx == 0 {
+                    pre = node
+                } else {
+                    pre!.next = node
+                    pre = node
+
+                    if idx == count - 1 {
+                        node.next = nil
+                    }
+                }
+            }
+        }
+        return root
+    }
+
+}
+
+/*
+ 给定一个二叉树，检查它是否是镜像对称的。
+
+  
+
+ 例如，二叉树 [1,2,2,3,4,4,3] 是对称的。
+
+     1
+    / \
+   2   2
+  / \ / \
+ 3  4 4  3
+  
+
+ 但是下面这个 [1,2,2,null,3,null,3] 则不是镜像对称的:
+
+     1
+    / \
+   2   2
+    \   \
+    3    3
+
+ 来源：力扣（LeetCode）
+ 链接：https://leetcode-cn.com/problems/symmetric-tree
+ 著作权归领扣网络所有。商业转载请联系官方授权，非商业转载请注明出处。
+ */
+class Solution101 {
+    func isSymmetric(_ root: TreeNode?) -> Bool {
+        if root == nil {
+            return true
+        }
+        return compare(root!.left, root!.right)
+    }
+    func compare(_ left: TreeNode?, _ right: TreeNode?) -> Bool {
+        if left == nil && right == nil {
+            return true
+        }
+        guard let left = left, let right = right else {
+            return false
+        }
+        if left.val != right.val {
+            return false
+        }
+
+        return compare(left.left, right.right) && compare(left.right, right.left)
+    }
+}
+/*
+ 701. 二叉搜索树中的插入操作
+ 给定二叉搜索树（BST）的根节点和要插入树中的值，将值插入二叉搜索树。 返回插入后二叉搜索树的根节点。 输入数据保证，新值和原始二叉搜索树中的任意节点值都不同。
+
+ 注意，可能存在多种有效的插入方式，只要树在插入后仍保持为二叉搜索树即可。 你可以返回任意有效的结果。
+
+  
+
+ 例如,
+
+ 给定二叉搜索树:
+
+         4
+        / \
+       2   7
+      / \
+     1   3
+
+ 和 插入的值: 5
+ 你可以返回这个二叉搜索树:
+
+          4
+        /   \
+       2     7
+      / \   /
+     1   3 5
+ 或者这个树也是有效的:
+
+          5
+        /   \
+       2     7
+      / \
+     1   3
+          \
+           4
+  
+
+ 提示：
+
+ 给定的树上的节点数介于 0 和 10^4 之间
+ 每个节点都有一个唯一整数值，取值范围从 0 到 10^8
+ -10^8 <= val <= 10^8
+ 新值和原始二叉搜索树中的任意节点值都不同
+
+ 来源：力扣（LeetCode）
+ 链接：https://leetcode-cn.com/problems/insert-into-a-binary-search-tree
+ 著作权归领扣网络所有。商业转载请联系官方授权，非商业转载请注明出处。
+ */
+class Solution701 {
+    func insertIntoBST(_ root: TreeNode?, _ val: Int) -> TreeNode? {
+        if root == nil {
+            return TreeNode(val)
+        }
+        if root!.val < val {
+            root!.right = insertIntoBST(root!.right, val)
+        } else {
+            root!.left = insertIntoBST(root!.left, val)
+        }
+        return root
+    }
+    
+    
+}
+
+class SolutionTest {
+    /*
+     给定两个由小写字母构成的字符串 A 和 B ，只要我们可以通过交换 A 中的两个字母得到与 B 相等的结果，就返回 true ；否则返回 false 。
+
+      
+
+     示例 1：
+
+     输入： A = "ab", B = "ba"
+     输出： true
+     示例 2：
+
+<<<<<<< HEAD
 /*
  199. 二叉树的右视图
  给定一棵二叉树，想象自己站在它的右侧，按照从顶部到底部的顺序，返回从右侧所能看到的节点值。
@@ -750,5 +1281,138 @@ class Solution617 {
         root.right = mergeTrees(t1?.right, t2?.right)
         
         return root
+     输入： A = "ab", B = "ab"
+     输出： false
+     示例 3:
+
+     输入： A = "aa", B = "aa"
+     输出： true
+     示例 4：
+
+     输入： A = "aaaaaaabc", B = "aaaaaaacb"
+     输出： true
+     示例 5：
+
+     输入： A = "", B = "aa"
+     输出： false
+     */
+    func buddyStrings(_ A: String, _ B: String) -> Bool {
+        if A.count < 2 || B.count < 2 {
+            return false
+        }
+        if A.count != B.count{
+            return false
+        }
+        
+        let arrA = A.map { return $0}
+        let arrB = B.map { return $0}
+        
+        if A == B {
+            for idx in 0..<arrA.count {
+                for idy in (idx+1)..<arrA.count {
+                    if arrA[idx] == arrA[idy] {
+                        return true
+                    }
+                }
+            }
+        } else {
+            var diff:[Int] = []
+            for (idx,valA) in arrA.enumerated() {
+                let valB = arrB[idx]
+                if valA != valB {
+                    diff.append(idx)
+                }
+            }
+            if diff.count == 2 {
+                let x1 = diff[0]
+                let x2 = diff[1]
+                if arrA[x1] == arrB[x2] && arrA[x2] == arrB[x1] {
+                    return true
+                }
+            }
+            
+        }
+        return false
+    }
+    /*
+     给定一个整数数组 A，找到 min(B) 的总和，其中 B 的范围为 A 的每个（连续）子数组。
+
+     由于答案可能很大，因此返回答案模 10^9 + 7。
+
+      
+
+     示例：
+
+     输入：[3,1,2,4]
+     输出：17
+     解释：
+     子数组为 [3]，[1]，[2]，[4]，[3,1]，[1,2]，[2,4]，[3,1,2]，[1,2,4]，[3,1,2,4]。
+     最小值为 3，1，2，4，1，1，2，1，1，1，和为 17。
+     */
+    
+    func sumSubarrayMins(_ A: [Int]) -> Int {
+        return 0
+    }
+    
+    /*
+    给定一个由 0 和 1 组成的数组 A，将数组分成 3 个非空的部分，使得所有这些部分表示相同的二进制值。
+
+    如果可以做到，请返回任何 [i, j]，其中 i+1 < j，这样一来：
+
+    A[0], A[1], ..., A[i] 组成第一部分；
+    A[i+1], A[i+2], ..., A[j-1] 作为第二部分；
+    A[j], A[j+1], ..., A[A.length - 1] 是第三部分。
+    这三个部分所表示的二进制值相等。
+    如果无法做到，就返回 [-1, -1]。
+
+    注意，在考虑每个部分所表示的二进制时，应当将其看作一个整体。例如，[1,1,0] 表示十进制中的 6，而不会是 3。此外，前导零也是被允许的，所以 [0,1,1] 和 [1,1] 表示相同的值。
+
+     
+
+    示例 1：
+
+    输入：[1,0,1,0,1]
+    输出：[0,3]
+    示例 2：
+
+    输出：[1,1,0,1,1]
+    输出：[-1,-1]
+    */
+    func threeEqualParts(_ A: [Int]) -> [Int] {
+        return []
+    }
+}
+
+/*
+ 小扣出去秋游，途中收集了一些红叶和黄叶，他利用这些叶子初步整理了一份秋叶收藏集 leaves， 字符串 leaves 仅包含小写字符 r 和 y， 其中字符 r 表示一片红叶，字符 y 表示一片黄叶。
+ 出于美观整齐的考虑，小扣想要将收藏集中树叶的排列调整成「红、黄、红」三部分。每部分树叶数量可以不相等，但均需大于等于 1。每次调整操作，小扣可以将一片红叶替换成黄叶或者将一片黄叶替换成红叶。请问小扣最少需要多少次调整操作才能将秋叶收藏集调整完毕。
+
+ 示例 1：
+
+ 输入：leaves = "rrryyyrryyyrr"
+
+ 输出：2
+
+ 解释：调整两次，将中间的两片红叶替换成黄叶，得到 "rrryyyyyyyyrr"
+ 示例 2：
+
+ 输入：leaves = "ryr"
+
+ 输出：0
+
+ 解释：已符合要求，不需要额外操作
+ 提示：
+ 3 <= leaves.length <= 10^5
+ leaves 中只包含字符 'r' 和字符 'y'
+
+ 来源：力扣（LeetCode）
+ 链接：https://leetcode-cn.com/problems/UlBDOe
+ 著作权归领扣网络所有。商业转载请联系官方授权，非商业转载请注明出处。
+ */
+class Solution19 {
+    func minimumOperations(_ leaves: String) -> Int {
+        let arr = Array(leaves)
+        
+        
     }
 }
