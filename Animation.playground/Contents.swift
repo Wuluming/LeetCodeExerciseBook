@@ -6,6 +6,8 @@ let kScreenW = UIScreen.main.bounds.width
 let kScreenH = UIScreen.main.bounds.height
 let margin_ViewMidPosition: CGFloat = 10
 let margin_ViewWidthHeight: CGFloat = 10
+
+
 class MyViewController : UIViewController {
     override func loadView() {
         let view = UIView()

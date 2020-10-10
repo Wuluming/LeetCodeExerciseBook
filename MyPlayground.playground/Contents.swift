@@ -687,29 +687,31 @@ class Solution104 {
         return max(maxDepth(root!.left) + 1, maxDepth(root!.right) + 1)
     }
 }
+//剑指 Offer 32 - I. 从上到下打印二叉树
+class Solution32 {
+    func levelOrder(_ root: TreeNode?) -> [Int] {
+        var quenu: [TreeNode] = []
+        var arr: [Int] = []
+        if root == nil {
+            return []
+        }
+        quenu.append(root!)
 
-/*
- 给定一个可包含重复数字的序列，返回所有不重复的全排列。
-
- 示例:
-
- 输入: [1,1,2]
- 输出:
- [
-   [1,1,2],
-   [1,2,1],
-   [2,1,1]
- ]
-
- 来源：力扣（LeetCode）
- 链接：https://leetcode-cn.com/problems/permutations-ii
- 著作权归领扣网络所有。商业转载请联系官方授权，非商业转载请注明出处。
- */
-class Solution47 {
-    func permuteUnique(_ nums: [Int]) -> [[Int]] {
-        return []
+        while(!quenu.isEmpty) {
+            let node = quenu.removeFirst()
+            arr.append(node.val)
+            if node.left != nil {
+                quenu.append(root!.left!)
+            }
+            if node.right != nil {
+                quenu.append(root!.right!)
+            }
+        }
+        return arr
     }
 }
+
+let test = Solution32()
 
 /*
  给定一个二叉树，判断其是否是一个有效的二叉搜索树。
@@ -1158,6 +1160,136 @@ class SolutionTest {
      输出： true
      示例 2：
 
+<<<<<<< HEAD
+/*
+ 199. 二叉树的右视图
+ 给定一棵二叉树，想象自己站在它的右侧，按照从顶部到底部的顺序，返回从右侧所能看到的节点值。
+
+ 示例:
+
+ 输入: [1,2,3,null,5,null,4]
+ 输出: [1, 3, 4]
+ 解释:
+
+    1            <---
+  /   \
+ 2     3         <---
+  \     \
+   5     4       <---
+ */
+
+class Solution199 {
+    var res:[Int] = []
+    var dic:[Int:[Int]] = [:]
+    func rightSideView(_ root: TreeNode?) -> [Int] {
+        if root == nil {
+           return []
+        }
+        deep(root!, 0)
+        
+        
+        for key in dic.keys.sorted() {
+            let arr = dic[key]
+            res.append(arr!.last!)
+        }
+        return res
+    }
+    
+    func deep(_ root: TreeNode?, _ level: Int) {
+        if root == nil {
+            return
+        }
+        if dic[level] != nil {
+            var temp:[Int] = []
+            temp.append(root!.val)
+            dic[level] = temp
+        } else {
+            dic[level]!.append(root!.val)
+        }
+        
+        deep(root!.left, level + 1)
+        
+        deep(root!.right, level + 1)
+    }
+}
+
+let test199 = Solution199()
+
+/*
+ 给定一组不含重复元素的整数数组 nums，返回该数组所有可能的子集（幂集）。
+
+ 说明：解集不能包含重复的子集。
+
+ 示例:
+
+ 输入: nums = [1,2,3]
+ 输出:
+ [
+   [3],
+   [1],
+   [2],
+   [1,2,3],
+   [1,3],
+   [2,3],
+   [1,2],
+   []
+ ]
+
+ 来源：力扣（LeetCode）
+ 链接：https://leetcode-cn.com/problems/subsets
+ 著作权归领扣网络所有。商业转载请联系官方授权，非商业转载请注明出处。
+ */
+
+class Solution78 {
+    func subsets(_ nums: [Int]) -> [[Int]] {
+        let set = Set(arrayLiteral: nums)
+        print(set)
+        return []
+    }
+}
+
+let test78 = Solution78()
+
+print(test78.subsets([1,2,3,3,2]))
+
+/*
+ 给定两个二叉树，想象当你将它们中的一个覆盖到另一个上时，两个二叉树的一些节点便会重叠。
+
+ 你需要将他们合并为一个新的二叉树。合并的规则是如果两个节点重叠，那么将他们的值相加作为节点合并后的新值，否则不为 NULL 的节点将直接作为新二叉树的节点。
+
+ 示例 1:
+
+ 输入:
+     Tree 1                     Tree 2
+           1                         2
+          / \                       / \
+         3   2                     1   3
+        /                           \   \
+       5                             4   7
+ 输出:
+ 合并后的树:
+          3
+         / \
+        4   5
+       / \   \
+      5   4   7
+ 注意: 合并必须从两个树的根节点开始。
+
+ 来源：力扣（LeetCode）
+ 链接：https://leetcode-cn.com/problems/merge-two-binary-trees
+ 著作权归领扣网络所有。商业转载请联系官方授权，非商业转载请注明出处。
+ */
+class Solution617 {
+    func mergeTrees(_ t1: TreeNode?, _ t2: TreeNode?) -> TreeNode? {
+        if t1 == nil && t2 == nil {
+            return nil
+        }
+        let root: TreeNode = TreeNode((t1 == nil ? 0: t1!.val) + (t2 == nil ? 0 : t2!.val))
+        
+        root.left = mergeTrees(t1?.left, t2?.left)
+        root.right = mergeTrees(t1?.right, t2?.right)
+        
+        return root
      输入： A = "ab", B = "ab"
      输出： false
      示例 3:
@@ -1260,6 +1392,7 @@ class SolutionTest {
     }
 }
 
+<<<<<<< HEAD
 class Solution141 {
     func hasCycle(_ head: ListNode?) -> Bool {
         var fast: ListNode? = head, slow: ListNode? = head
@@ -1332,6 +1465,38 @@ class Solution2 {
             s[idx] = s[idy]
             s[idy] = valx
         }
+=======
+/*
+ 小扣出去秋游，途中收集了一些红叶和黄叶，他利用这些叶子初步整理了一份秋叶收藏集 leaves， 字符串 leaves 仅包含小写字符 r 和 y， 其中字符 r 表示一片红叶，字符 y 表示一片黄叶。
+ 出于美观整齐的考虑，小扣想要将收藏集中树叶的排列调整成「红、黄、红」三部分。每部分树叶数量可以不相等，但均需大于等于 1。每次调整操作，小扣可以将一片红叶替换成黄叶或者将一片黄叶替换成红叶。请问小扣最少需要多少次调整操作才能将秋叶收藏集调整完毕。
+
+ 示例 1：
+
+ 输入：leaves = "rrryyyrryyyrr"
+
+ 输出：2
+
+ 解释：调整两次，将中间的两片红叶替换成黄叶，得到 "rrryyyyyyyyrr"
+ 示例 2：
+
+ 输入：leaves = "ryr"
+
+ 输出：0
+
+ 解释：已符合要求，不需要额外操作
+ 提示：
+ 3 <= leaves.length <= 10^5
+ leaves 中只包含字符 'r' 和字符 'y'
+
+ 来源：力扣（LeetCode）
+ 链接：https://leetcode-cn.com/problems/UlBDOe
+ 著作权归领扣网络所有。商业转载请联系官方授权，非商业转载请注明出处。
+ */
+class Solution19 {
+    func minimumOperations(_ leaves: String) -> Int {
+        let arr = Array(leaves)
+        
+>>>>>>> cd4caf125606d029da66bd287317315bc27a8280
         
     }
 }
