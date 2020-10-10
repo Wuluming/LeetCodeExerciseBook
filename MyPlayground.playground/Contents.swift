@@ -22,6 +22,15 @@ public class Node {
     }
 }
 
+public class ListNode {
+    public var val: Int
+    public var next: ListNode?
+    public init(_ val: Int) {
+        self.val = val
+        self.next = nil
+    }
+}
+
 /*
         定义                      优点                                                                                 缺点
  递归：程序调用自身              大问题转化成小问题，可以减少代码量，同时代码精简，可读性好                      递归调用了浪费了空间，而且递归太深容易造成堆栈的溢出
@@ -249,12 +258,12 @@ class Solution343 {
         }
         
         for idx in 2..<n {
-            let res = idx * (n - idx)
+            let res = idx (n - idx)
             if res > max {
                 max0 = idx
                 max1 = n - idx
                 max = res
-                integerBreak(max0) * integerBreak(max1)
+                integerBreak(max0) integerBreak(max1)
             }
             
         }
@@ -1248,5 +1257,81 @@ class SolutionTest {
     */
     func threeEqualParts(_ A: [Int]) -> [Int] {
         return []
+    }
+}
+
+class Solution141 {
+    func hasCycle(_ head: ListNode?) -> Bool {
+        var fast: ListNode? = head, slow: ListNode? = head
+        while fast != nil && fast!.next != nil {
+            fast = fast!.next!.next
+            slow = slow!.next
+            
+            if fast != nil && slow != nil && fast!.val == slow!.val {
+                return true
+            }
+        }
+        return false
+    }
+}
+
+class Solution1 {
+    func twoSum(_ nums: [Int], _ target: Int) -> [Int] {
+        /*
+        //method 1
+        for idx in 0..<(nums.count - 1) {
+            let x = target - nums[idx]
+            for idy in (idx + 1)..<nums.count {
+                if x == nums[idy] {
+                    return [idx, idy]
+                }
+            }
+        }
+        return []
+         */
+        var dict: [Int: Int] = [:]
+        for i in 0..<nums.count {
+            let temp = target - nums[i]
+            if dict[temp] != nil {
+                return [dict[temp]!, i]
+            }
+            dict[nums[i]] = i
+        }
+        return []
+    }
+}
+
+class Solution2 {
+    
+    func addTwoNumbers(_ l1: ListNode?, _ l2: ListNode?) -> ListNode? {
+        var new = ListNode(0)
+        var temp = new
+        var l1 = l1
+        var  l2 = l2
+        var plus = 0
+        while l1 != nil || l2 != nil || plus != 0{
+            let sum = (l1?.val ?? 0) + (l2?.val ?? 0) + plus
+            plus = sum/10
+            temp.next = ListNode(sum%10)
+            temp = temp.next!
+            if l1 != nil {
+                l1 = l1!.next
+            }
+            if l2 != nil {
+                l2 = l2!.next
+            }
+        }
+        return new.next
+    }
+    
+    func reverseString(_ s: inout [Character]) {
+        let mid = s.count/2
+        for idx in 0..<mid {
+            let valx = s[idx]
+            let idy = s.count - 1 - idx
+            s[idx] = s[idy]
+            s[idy] = valx
+        }
+        
     }
 }
