@@ -162,7 +162,7 @@ class Solution0 {
     }
 }
 
-class Solution {
+class SolutionDepth {
     func maxDepth(_ root: TreeNode?) -> Int {
         if root == nil {
             return 0
@@ -257,16 +257,16 @@ class Solution343 {
             return 1
         }
         
-        for idx in 2..<n {
-            let res = idx (n - idx)
-            if res > max {
-                max0 = idx
-                max1 = n - idx
-                max = res
-                integerBreak(max0) integerBreak(max1)
-            }
-            
-        }
+//        for idx in 2..<n {
+//            let res = idx (n - idx)
+//            if res > max {
+//                max0 = idx
+//                max1 = n - idx
+//                max = res
+//                integerBreak(max0) integerBreak(max1)
+//            }
+//
+//        }
         
         
         return max
@@ -1392,7 +1392,6 @@ class Solution617 {
     }
 }
 
-<<<<<<< HEAD
 class Solution141 {
     func hasCycle(_ head: ListNode?) -> Bool {
         var fast: ListNode? = head, slow: ListNode? = head
@@ -1465,7 +1464,7 @@ class Solution2 {
             s[idx] = s[idy]
             s[idy] = valx
         }
-=======
+}
 /*
  小扣出去秋游，途中收集了一些红叶和黄叶，他利用这些叶子初步整理了一份秋叶收藏集 leaves， 字符串 leaves 仅包含小写字符 r 和 y， 其中字符 r 表示一片红叶，字符 y 表示一片黄叶。
  出于美观整齐的考虑，小扣想要将收藏集中树叶的排列调整成「红、黄、红」三部分。每部分树叶数量可以不相等，但均需大于等于 1。每次调整操作，小扣可以将一片红叶替换成黄叶或者将一片黄叶替换成红叶。请问小扣最少需要多少次调整操作才能将秋叶收藏集调整完毕。
@@ -1492,11 +1491,47 @@ class Solution2 {
  链接：https://leetcode-cn.com/problems/UlBDOe
  著作权归领扣网络所有。商业转载请联系官方授权，非商业转载请注明出处。
  */
-class Solution19 {
+}
+
+class Solution {
     func minimumOperations(_ leaves: String) -> Int {
-        let arr = Array(leaves)
         
->>>>>>> cd4caf125606d029da66bd287317315bc27a8280
+        return 0
         
     }
+    
+    //530. 二叉搜索树的最小绝对差
+    func getMinimumDifference(_ root: TreeNode?) -> Int {
+        var arr = [Int]()
+        var stack = [TreeNode]()
+        if root == nil {
+            return 0
+        }
+        stack.append(root!)
+        
+        while !stack.isEmpty {
+            let node = stack.removeFirst()
+            arr.append(node.val)
+            if node.left != nil {
+                stack.append(node.left!)
+            }
+            if node.right != nil {
+                stack.append(node.right!)
+            }
+        }
+        let temp = arr.sorted { $0 > $1 }
+        var res = Int.max
+        for key in 0..<(temp.count - 1) {
+            res = min(res, temp[key + 1] - temp[key])
+        }
+        return res
+    }
+}
+
+
+class Solution977 {
+    func sortedSquares(_ A: [Int]) -> [Int] {
+        
+    }
+    
 }
